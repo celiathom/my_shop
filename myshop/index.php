@@ -24,56 +24,60 @@ session_start();
             text-align: center;
             min-width: 320px;
         }
-        .home-title {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            color: #007BFF;
-        }
         .home-welcome {
             font-size: 1.5rem;
             margin-bottom: 10px;
             color: #333;
         }
+        .home-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #666;
+        }
         .home-subtitle {
-            color: #555;
-            margin-bottom: 30px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: #999;
         }
         .home-btn {
             display: inline-block;
-            margin: 10px 12px 0 12px;
-            padding: 12px 32px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            border: none;
-            background: #007BFF;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
             text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            transition: background-color 0.3s;
         }
         .home-btn:hover {
-            background: #0056b3;
+            background-color: #0056b3;
         }
-        .admin-link {
-            display: block;
-            margin-top: 24px;
-            color: #007BFF;
-            font-weight: bold;
-            text-decoration: none;
+        .logout-topright {
+            position: absolute;
+            top: 32px;
+            right: 48px;
+            z-index: 10;
         }
-        .admin-link:hover {
-            text-decoration: underline;
+        @media (max-width: 600px) {
+            .logout-topright {
+                top: 12px;
+                right: 12px;
+            }
         }
     </style>
 </head>
 <body class="home-center">
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <a href="logout.php" class="home-btn logout-topright">Déconnexion</a>
+    <?php endif; ?>
     <div class="home-box">
         <div class="home-welcome">Bienvenue sur MY-SHOP</div>
-        <div class="home-title">Votre boutique en ligne, simple, rapide et 100% sécurisée</div>
-        <div class="home-subtitle">Accéder au site !</div>
-        <a href="signin.php" class="home-btn">Se connecter</a>
-        <a href="signup.php" class="home-btn">Créer un compte</a>
+        <?php if (!isset($_SESSION['user_id'])): ?>
+            <div class="home-title">Votre boutique en ligne, simple, rapide et 100% sécurisée</div>
+            <div class="home-subtitle">Accéder au site !</div>
+            <a href="signin.php" class="home-btn">Se connecter</a>
+            <a href="signup.php" class="home-btn">Créer un compte</a>
+        <?php endif; ?>
     </div>
 </body>
 </html>

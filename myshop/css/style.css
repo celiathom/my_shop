@@ -177,3 +177,84 @@ h1 {
   color: #0056b3;
   text-decoration: underline;
 }
+
+/* Tableaux d'administration modernes */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.admin-table th {
+  background: #e9f1fb;
+  color: #007bff;
+  font-size: 1.08rem;
+  padding: 14px 10px;
+  text-align: left;
+  font-weight: 700;
+}
+.admin-table th.center, .admin-table td.center {
+  text-align: center;
+}
+.admin-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e3e3e3;
+  font-size: 1rem;
+}
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+.admin-table tr:hover {
+  background: #f6faff;
+}
+
+/* Boutons d'action admin */
+.admin-btn {
+  padding: 7px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: background 0.18s, color 0.18s;
+}
+.admin-btn.edit {
+  background: #ffc107;
+  color: #23272f;
+}
+.admin-btn.delete {
+  background: #dc3545;
+  color: #fff;
+}
+.admin-btn.save {
+  background: #007bff;
+  color: #fff;
+}
+.admin-btn.cancel {
+  background: #ccc;
+  color: #333;
+}
+.admin-btn.admin {
+  background: #17a2b8;
+  color: #fff;
+  font-size: 0.98rem;
+  padding: 7px 12px;
+  min-width: unset;
+  font-weight: 500;
+}
+.admin-btn.edit:hover { background: #e0a800; }
+.admin-btn.delete:hover { background: #b52a37; }
+.admin-btn.save:hover { background: #0056b3; }
+.admin-btn.cancel:hover { background: #999; }
+.admin-btn.admin:hover { background: #138496; }
+.admin-table td .admin-btn {
+  margin-right: 0;
+}
+.admin-table td > div {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
