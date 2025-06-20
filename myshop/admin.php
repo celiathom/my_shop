@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 session_start();
-// Redirige si l'utilisateur n'est pas connecté
+// Redirige automatiquement vers la page de connexion ou d'inscription si l'utilisateur n'est pas connecté
 if (!isset($_SESSION['user_id'])) {
     header('Location: signin.php');
     exit();
@@ -369,26 +369,29 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Administration MY SHOP</h1>
-    <nav>
-        <ul>
-            <li><a href="admin.php?page=users">Utilisateurs</a></li>
-            <li><a href="admin.php?page=products">Produits</a></li>
-            <li><a href="admin.php?page=categories">Catégories</a></li>
-            <li><a href="index.php">Retour à l'accueil</a></li>
-        </ul>
-    </nav>
-    <hr>
-    <div>
-        <?php
-        if (isset($_GET['page']) && $_GET['page'] === 'categories') {
-            echo "<h2>Gestion des catégories</h2>";
-        } else if (isset($_GET['page']) && $_GET['page'] === 'products') {
-            echo "<h2>Gestion des produits</h2>";
-        } else if (isset($_GET['page']) && $_GET['page'] === 'users') {
-            echo "<h2>Gestion des utilisateurs</h2>";
-        }
-        ?>
+    <div class="admin-center">
+        <h1>Administration MY SHOP</h1>
+        <nav>
+            <ul>
+                <li><a href="admin.php?page=users">Utilisateurs</a></li>
+                <li><a href="admin.php?page=products">Produits</a></li>
+                <li><a href="admin.php?page=categories">Catégories</a></li>
+                <li><a href="index.php">Retour à l'accueil</a></li>
+                <li><a href="logout.php">Déconnexion</a></li>
+            </ul>
+        </nav>
+        <hr>
+        <div>
+            <?php
+            if (isset($_GET['page']) && $_GET['page'] === 'categories') {
+                echo "<h2>Gestion des catégories</h2>";
+            } else if (isset($_GET['page']) && $_GET['page'] === 'products') {
+                echo "<h2>Gestion des produits</h2>";
+            } else if (isset($_GET['page']) && $_GET['page'] === 'users') {
+                echo "<h2>Gestion des utilisateurs</h2>";
+            }
+            ?>
+        </div>
     </div>
 </body>
 </html>
