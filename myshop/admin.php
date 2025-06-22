@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 session_start();
+ob_start();
 // Redirige automatiquement vers la page de connexion ou d'inscription si l'utilisateur n'est pas connecté
 if (!isset($_SESSION['user_id'])) {
     header('Location: signin.php');
@@ -372,7 +373,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
                 ."<td style='padding:10px 8px;text-align:center;'>{$prod['id']}</td>"
                 ."<td style='padding:10px 32px 10px 32px;text-align:right;'>".htmlspecialchars($prod['name'])."</td>"
                 ."<td style='padding:10px 48px 10px 48px;text-align:center;width:90px;'>".htmlspecialchars($prod['price'])."</td>"
-                ."<td style='padding:10px 32px 10px 32px;text-align:right;'>".htmlspecialchars($prod['cat_name'])."</td>"
+                ."<td style='padding:10px 32px 10px 32px;text-align:right;'>" . htmlspecialchars($prod['cat_name'] ?? '', ENT_QUOTES) . "</td>"
                 ."<td style='padding:10px 8px;text-align:center;'>"
                 ."<form method='post' style='display:inline;'>"
                 ."<input type='hidden' name='edit_mode' value='{$prod['id']}'>"
