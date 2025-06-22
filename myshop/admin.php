@@ -21,7 +21,7 @@ if (!$user || $user['admin'] != 1) {
 }
 if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     echo '<div style="max-width:900px;margin:120px auto 0 auto;">';
-    // --- AJOUT D'UNE CATÉGORIE ---
+    // ajout catégrorie
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cat_name'])) {
         $cat_name = trim($_POST['cat_name']);
         if (!empty($cat_name)) {
@@ -109,7 +109,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
         isset($_POST['delete_id'])
     ) {
         $delete_id = intval($_POST['delete_id']);
-        // On évite de supprimer son propre compte admin
+        // on évite de supprimer son propre compte admin
         if ($delete_id != $_SESSION['user_id']) {
             $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
             $stmt->execute([$delete_id]);
@@ -118,7 +118,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
             echo "<p style='color:red;'>Vous ne pouvez pas supprimer votre propre compte.</p>";
         }
     }
-    // --- CHANGEMENT DE STATUT ADMIN ---
+    // changement de statut admin
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['user_action']) && $_POST['user_action'] === 'toggle_admin' &&
@@ -162,7 +162,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
             echo "<p style='color:red;'>Tous les champs sont obligatoires.</p>";
         }
     }
-    // --- MODIFICATION D'UN UTILISATEUR PAR L'ADMIN ---
+    // modification d'un utlisateur par admin
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['user_action']) && $_POST['user_action'] === 'edit_user' &&
@@ -197,7 +197,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
             echo "<p style='color:red;'>Le nom et l'email sont obligatoires.</p>";
         }
     }
-    // --- AFFICHAGE DES UTILISATEURS ---
+    // affichage des utilisateurs 
     echo '<h2 style="text-align:center;margin-bottom:24px;color:#007bff;font-size:2rem;">Utilisateurs</h2>';
     echo '<form method="post" autocomplete="off" style="margin-bottom:24px;display:flex;gap:12px;align-items:flex-end;justify-content:center;background:#f8f9fa;padding:18px 24px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
     echo '<input type="hidden" name="user_action" value="add_user">';
@@ -270,7 +270,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     echo '</div>';
 } else if (isset($_GET['page']) && $_GET['page'] === 'products') {
     echo '<div style="max-width:900px;margin:120px auto 0 auto;">';
-    // --- AJOUT D'UN PRODUIT AVEC IMAGE ---
+    // ajout d'un produit
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['prod_action']) && $_POST['prod_action'] === 'add'
@@ -297,7 +297,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
         }
     }
 
-    // --- MODIFICATION D'UN PRODUIT ---
+    // modifaction d'un produit
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['prod_action']) && $_POST['prod_action'] === 'edit' &&
@@ -317,7 +317,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
         }
     }
 
-    // --- SUPPRESSION D'UN PRODUIT ---
+    // -suppression d'un produit
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['prod_action']) && $_POST['prod_action'] === 'delete' &&
@@ -330,25 +330,28 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
         exit();
     }
 
-    // --- AFFICHAGE DES PRODUITS ---
+    // affichage des produits
     echo "<h2 style='text-align:center;margin-bottom:24px;color:#007bff;font-size:2rem;'>Produits</h2>";
     // Récupère les catégories pour le select
     $cat_stmt = $pdo->query("SELECT * FROM categories");
     $categories = $cat_stmt->fetchAll(PDO::FETCH_ASSOC);
     // Formulaire d'ajout
-    echo '<form method="post" enctype="multipart/form-data" style="margin-bottom:24px;display:flex;gap:12px;align-items:flex-end;justify-content:center;background:#f8f9fa;padding:18px 24px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
-    echo '<input type="hidden" name="prod_action" value="add">';
-    echo '<input type="text" name="prod_name" placeholder="Nom du produit" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
-    echo '<input type="number" name="prod_price" placeholder="Prix" min="1" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
-    echo '<select name="prod_category" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;">';
-    echo '<option value="">Catégorie</option>';
-    foreach ($categories as $cat) {
-        echo '<option value="'.$cat['id'].'">'.htmlspecialchars($cat['name']).'</option>';
+    $isEditing = isset($_POST['edit_mode']);
+    if (!$isEditing) {
+        echo '<form method="post" enctype="multipart/form-data" style="margin-bottom:24px;display:flex;gap:12px;align-items:flex-end;justify-content:center;background:#f8f9fa;padding:18px 24px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
+        echo '<input type="hidden" name="prod_action" value="add">';
+        echo '<input type="text" name="prod_name" placeholder="Nom du produit" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
+        echo '<input type="number" name="prod_price" placeholder="Prix" min="1" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
+        echo '<select name="prod_category" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;">';
+        echo '<option value="">Catégorie</option>';
+        foreach ($categories as $cat) {
+            echo '<option value="'.$cat['id'].'">'.htmlspecialchars($cat['name']).'</option>';
+        }
+        echo '</select> ';
+        echo '<input type="file" name="prod_picture" accept="image/*" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
+        echo '<button type="submit" style="background:#007bff;color:#fff;padding:10px 24px;border:none;border-radius:6px;font-weight:600;cursor:pointer;">Ajouter</button>';
+        echo '</form>';
     }
-    echo '</select> ';
-    echo '<input type="file" name="prod_picture" accept="image/*" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
-    echo '<button type="submit" style="background:#007bff;color:#fff;padding:10px 24px;border:none;border-radius:6px;font-weight:600;cursor:pointer;">Ajouter</button>';
-    echo '</form>';
     // Affichage des produits
     $stmt = $pdo->query("SELECT products.*, categories.name AS cat_name FROM products LEFT JOIN categories ON products.category_id = categories.id");
     echo "<table class='admin-table'>";
@@ -377,7 +380,8 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
             echo    "</select>"
                 ."<input type='file' name='edit_picture' accept='image/*' style='padding:10px 14px;border-radius:6px;border:1px solid #ccc;'> ";
             if (!empty($prod['picture'])) {
-                echo "<img src='assets/".htmlspecialchars($prod['picture'])."' alt='Aperçu' style='height:48px;vertical-align:middle;margin-left:8px;border-radius:6px;'>";
+                // Ajout d'un alt pertinent pour l'accessibilité
+                echo "<img src='assets/".htmlspecialchars($prod['picture'])."' alt='Photo du produit : ".htmlspecialchars($prod['name'])."' style='height:48px;vertical-align:middle;margin-left:8px;border-radius:6px;'>";
             }
             echo    "<button type='submit' class='admin-btn save'>Enregistrer</button>"
                 ."</form>"
@@ -429,7 +433,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     </nav>
     <div style="max-width:1100px;margin:120px auto 0 auto;padding:0 32px;">
         <?php
-        // Suppression de l'affichage 'Gestion des catégories'
+        
         ?>
     </div>
 </body>

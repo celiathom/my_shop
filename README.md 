@@ -1,0 +1,62 @@
+# MY_SHOP — Boutique en ligne
+
+## Description
+MY_SHOP est une boutique en ligne développée en PHP orienté objet.
+Le projet permet aux **utilisateurs** de consulter des produits, de filtrer et trier les articles, et aux **admins** de gérer tout le catalogue via une interface sécurisée.
+
+## Fonctionnalités
+
+### Côté Client
+- Affichage de tous les produits sous forme de cards responsive
+- Barre de recherche (nom, description, catégorie)
+- Filtre de prix (min, max)
+- Tri par ordre alphabétique ou prix croissant/décroissant
+- Formulaire d’inscription et de connexion
+- Déconnexion avec suppression des sessions et cookies
+- Design responsive et optimisé pour le SEO
+
+### Côté Admin
+- Connexion sécurisée pour accéder au tableau de bord
+- CRUD complet pour :
+  - Utilisateurs
+  - Produits (avec upload d’image)
+  - Catégories
+- Gestion des erreurs et vérification des doublons
+- Sécurité des requêtes (PDO, requêtes préparées)
+
+## Technologies
+- PHP orienté objet
+- HTML5 / CSS3
+- SQL (base de données MySQL)
+- PDO pour la connexion sécurisée
+- Sessions et cookies pour l’authentification
+
+## Structure
+
+/index.php            -> Page d'accueil (vitrine client)
+/signup.php           -> Inscription utilisateur
+/signin.php           -> Connexion utilisateur
+/admin.php            -> Interface Admin protégée
+/uploads/             -> Dossier des images produits
+/css/                 -> Feuilles de style
+/db.sql               -> Dump de la base de données (exemple)
+```
+
+## Installation
+ 
+   cd my_shop
+   cd myshop
+   
+##  Accès admin
+Pour tester :
+- **Email admin :** celiathom94@gmail.com
+- **Mot de passe :** alya2002
+
+##  Accès client
+Pour tester :
+- **Email admin :** celia.thomias@epitech.eu
+- **Mot de passe :** alya2002
+
+
+## Auteur
+- Célia Thomias — Développeuse Web
