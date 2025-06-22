@@ -60,10 +60,10 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     echo '</form>';
     $stmt = $pdo->query("SELECT * FROM categories");
     echo "<table class='admin-table'>";
-    echo "<tr>"
-        ."<th class='center'>ID</th>"
-        ."<th>Nom</th>"
-        ."<th class='center'>Actions</th>"
+    echo "<tr style='background:#e9f1fb;color:#007bff;font-size:1.1rem;'>"
+        ."<th style='padding:12px 8px;text-align:center;'>ID</th>"
+        ."<th style='padding:12px 32px 12px 32px;text-align:right;'>Nom</th>"
+        ."<th style='padding:12px 48px 12px 48px;text-align:right;'>Actions</th>"
         ."</tr>";
     foreach ($stmt as $cat) {
         if (isset($_POST['edit_mode']) && $_POST['edit_mode'] == $cat['id']) {
@@ -72,17 +72,18 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
                 ."<td>"
                 ."<form method='post' style='display:flex;gap:10px;align-items:center;'>"
                 ."<input type='hidden' name='edit_id' value='{$cat['id']}'>"
-                ."<input type='text' name='edit_name' value='".htmlspecialchars($cat['name'], ENT_QUOTES)."' required style='padding:8px 12px;border-radius:6px;border:1px solid #ccc;'> "
+                ."<input type='text' name='edit_name' value='".htmlspecialchars($cat['name'], ENT_QUOTES)."' required style='padding:8px 12px;border-radius:6px;border:1px solid #ccc;text-align:right;'> "
                 ."<button type='submit' class='admin-btn save'>Enregistrer</button>"
                 ."</form>"
                 ."</td>"
-                ."<td class='center'></td>"
+                ."<td class='center' style='text-align:right;padding-right:32px;'></td>"
                 ."</tr>";
         } else {
             echo "<tr>"
                 ."<td class='center' style=''>{$cat['id']}</td>"
-                ."<td>".htmlspecialchars($cat['name'])."</td>"
-                ."<td class='center'>"
+                ."<td style='text-align:right;'>".htmlspecialchars($cat['name'])."</td>"
+                ."<td class='center' style='text-align:right;padding-right:32px;'>"
+                ."<div style='display:inline-block;'>"
                 ."<form method='post' style='display:inline;'>"
                 ."<input type='hidden' name='edit_mode' value='{$cat['id']}'>"
                 ."<button type='submit' class='admin-btn edit'>Modifier</button>"
@@ -91,6 +92,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
                 ."<input type='hidden' name='delete_id' value='{$cat['id']}'>"
                 ."<button type='submit' onclick=\"return confirm('Supprimer cette catégorie ?');\" class='admin-btn delete'>Supprimer</button>"
                 ."</form>"
+                ."</div>"
                 ."</td>"
                 ."</tr>";
         }

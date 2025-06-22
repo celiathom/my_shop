@@ -79,5 +79,33 @@ session_start();
             <a href="signup.php" class="home-btn">Créer un compte</a>
         <?php endif; ?>
     </div>
+    <?php if (isset($_SESSION['user_id'])): ?>
+    <div class="products-list-home" style="margin:48px auto 0 auto;max-width:1100px;">
+        <h2 style="text-align:center;color:#007bff;font-size:1.3rem;margin-bottom:18px;">Nos articles</h2>
+        <?php
+        require_once __DIR__.'/classes/Product.php';
+        require_once __DIR__.'/classes/Category.php';
+        $productObj = new Product();
+        $categoryObj = new Category();
+        $products = $productObj->getAll();
+        $categories = $categoryObj->getAll();
+        $catMap = [];
+        foreach($categories as $c) $catMap[$c['id']] = $c['name'];
+        if (empty($products)) {
+            echo '<div style="text-align:center;color:#b30000;">Aucun article disponible.</div>';
+        } else {
+            echo '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">';
+            foreach($products as $p) {
+                echo '<div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px #007bff11;padding:18px 12px;text-align:center;">';
+                echo '<div style="font-weight:700;color:#007bff;font-size:1.08rem;">'.htmlspecialchars($p['name']).'</div>';
+                echo '<div style="color:#888;font-size:0.98rem;margin:6px 0;">Catégorie : '.htmlspecialchars($catMap[$p['category_id']] ?? '').'</div>';
+                echo '<div style="color:#23272f;font-size:1.1rem;font-weight:600;">'.number_format($p['price'],2,',',' ').' €</div>';
+                echo '</div>';
+            }
+            echo '</div>';
+        }
+        ?>
+    </div>
+    <?php endif; ?>
 </body>
 </html>

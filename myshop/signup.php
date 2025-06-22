@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             echo '</div>';
         }
         ?>
-        <form action="signup.php" method="POST" class="auth-form">
+        <form action="signup.php" method="POST" class="auth-form" style="margin-left: 40px;">
             <label for="username">Nom d'utilisateur</label>
             <input type="text" id="username" name="username" placeholder="Entrez votre nom" required>
 
