@@ -222,12 +222,24 @@ session_start();
         } elseif ($sort === 'pricehigh') {
             usort($filtered, function($a, $b) { return $b['price'] <=> $a['price']; });
         }
+        // --- Affichage des catégories sous forme de boutons ---
+        echo '<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:22px;">';
+        echo '<a href="index.php" style="padding:8px 18px;border-radius:6px;background:'.($cat==''?'#007bff':'#e9f1fb').';color:'.($cat==''?'#fff':'#007bff').';text-decoration:none;font-weight:600;transition:background 0.2s;">Toutes</a>';
+        foreach($categories as $c) {
+            $active = ($cat == $c['id']);
+            echo '<a href="?cat='.$c['id'].'" style="padding:8px 18px;border-radius:6px;background:'.($active?'#007bff':'#e9f1fb').';color:'.($active?'#fff':'#007bff').';text-decoration:none;font-weight:600;transition:background 0.2s;">'.htmlspecialchars($c['name']).'</a>';
+        }
+        echo '</div>';
         if (empty($filtered)) {
             echo '<div style="text-align:center;color:#b30000;">Aucun article ne correspond à vos critères.</div>';
         } else {
             echo '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">';
             foreach($filtered as $p) {
                 echo '<div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px #007bff11;padding:18px 12px;text-align:center;">';
+                // Affichage dynamique de l'image du produit si picture existe
+                if (!empty($p['picture'])) {
+                    echo '<img src="assets/'.htmlspecialchars($p['picture']).'" alt="'.htmlspecialchars($p['name']).'" style="width:100%;max-width:180px;border-radius:8px;margin-bottom:10px;box-shadow:0 2px 8px #007bff22;">';
+                }
                 echo '<div style="font-weight:700;color:#007bff;font-size:1.08rem;">'.htmlspecialchars($p['name']).'</div>';
                 echo '<div style="color:#888;font-size:0.98rem;margin:6px 0;">Catégorie : '.htmlspecialchars($catMap[$p['category_id']] ?? '').'</div>';
                 echo '<div style="color:#23272f;font-size:1.1rem;font-weight:600;">'.number_format($p['price'],2,',',' ').' €</div>';

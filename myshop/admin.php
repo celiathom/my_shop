@@ -270,7 +270,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     echo '</div>';
 } else if (isset($_GET['page']) && $_GET['page'] === 'products') {
     echo '<div style="max-width:900px;margin:120px auto 0 auto;">';
-    // --- AJOUT D'UN PRODUIT ---
+    // --- AJOUT D'UN PRODUIT AVEC IMAGE ---
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['prod_action']) && $_POST['prod_action'] === 'add'
@@ -278,12 +278,22 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
         $prod_name = trim($_POST['prod_name']);
         $prod_price = intval($_POST['prod_price']);
         $prod_category = intval($_POST['prod_category']);
-        if (!empty($prod_name) && $prod_price > 0 && $prod_category > 0) {
-            $stmt = $pdo->prepare("INSERT INTO products (name, price, category_id) VALUES (?, ?, ?)");
-            $stmt->execute([$prod_name, $prod_price, $prod_category]);
-            echo "<p style='color:green;'>Produit ajouté !</p>";
+        $picture = $_FILES['prod_picture'] ?? null;
+        $img_name = '';
+        if (!empty($prod_name) && $prod_price > 0 && $prod_category > 0 && $picture && $picture['error'] === 0) {
+            $ext = strtolower(pathinfo($picture['name'], PATHINFO_EXTENSION));
+            $allowed = ['jpg','jpeg','png','gif','webp'];
+            if (in_array($ext, $allowed)) {
+                $img_name = uniqid('prod_', true).'.'.$ext;
+                move_uploaded_file($picture['tmp_name'], __DIR__.'/assets/'.$img_name);
+                $stmt = $pdo->prepare("INSERT INTO products (name, price, category_id, picture) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$prod_name, $prod_price, $prod_category, $img_name]);
+                echo "<p style='color:green;'>Produit ajouté !</p>";
+            } else {
+                echo "<p style='color:red;'>Format d'image non autorisé.</p>";
+            }
         } else {
-            echo "<p style='color:red;'>Tous les champs sont obligatoires et le prix doit être positif.</p>";
+            echo "<p style='color:red;'>Tous les champs sont obligatoires, le prix doit être positif et une image valide doit être fournie.</p>";
         }
     }
 
@@ -295,7 +305,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     ) {
         $edit_id = intval($_POST['edit_id']);
         $edit_name = trim($_POST['edit_name']);
-        $edit_price = intval($_POST['edit_price']);
+        $edit_price = floatval($_POST['edit_price']);
         $edit_category = intval($_POST['edit_category']);
         if (!empty($edit_name) && $edit_price > 0 && $edit_category > 0) {
             $stmt = $pdo->prepare("UPDATE products SET name = ?, price = ?, category_id = ? WHERE id = ?");
@@ -326,7 +336,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
     $cat_stmt = $pdo->query("SELECT * FROM categories");
     $categories = $cat_stmt->fetchAll(PDO::FETCH_ASSOC);
     // Formulaire d'ajout
-    echo '<form method="post" style="margin-bottom:24px;display:flex;gap:12px;align-items:flex-end;justify-content:center;background:#f8f9fa;padding:18px 24px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
+    echo '<form method="post" enctype="multipart/form-data" style="margin-bottom:24px;display:flex;gap:12px;align-items:flex-end;justify-content:center;background:#f8f9fa;padding:18px 24px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
     echo '<input type="hidden" name="prod_action" value="add">';
     echo '<input type="text" name="prod_name" placeholder="Nom du produit" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
     echo '<input type="number" name="prod_price" placeholder="Prix" min="1" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
@@ -336,6 +346,7 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
         echo '<option value="'.$cat['id'].'">'.htmlspecialchars($cat['name']).'</option>';
     }
     echo '</select> ';
+    echo '<input type="file" name="prod_picture" accept="image/*" required style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;"> ';
     echo '<button type="submit" style="background:#007bff;color:#fff;padding:10px 24px;border:none;border-radius:6px;font-weight:600;cursor:pointer;">Ajouter</button>';
     echo '</form>';
     // Affichage des produits
@@ -353,18 +364,22 @@ if (isset($_GET['page']) && $_GET['page'] === 'categories') {
             echo "<tr style='background:#f6faff;'>"
                 ."<td>{$prod['id']}</td>"
                 ."<td colspan='4'>"
-                ."<form method='post' style='display:flex;gap:10px;align-items:center;'>"
+                ."<form method='post' enctype='multipart/form-data' style='display:flex;gap:10px;align-items:center;'>"
                 ."<input type='hidden' name='prod_action' value='edit'>"
                 ."<input type='hidden' name='edit_id' value='{$prod['id']}'>"
                 ."<input type='text' name='edit_name' value='".htmlspecialchars($prod['name'], ENT_QUOTES)."' required style='padding:8px 12px;border-radius:6px;border:1px solid #ccc;text-align:right;'> "
-                ."<input type='number' name='edit_price' value='{$prod['price']}' min='1' required style='padding:8px 48px;border-radius:6px;border:1px solid #ccc;text-align:center;width:90px;'> "
+                ."<input type='number' name='edit_price' value='" . htmlspecialchars(number_format((float)($prod['price'] ?? 0), 2, '.', ''), ENT_QUOTES) . "' min='1' step='0.01' required style='padding:8px 48px;border-radius:6px;border:1px solid #ccc;text-align:center;width:90px;'> "
                 ."<select name='edit_category' required style='padding:8px 12px;border-radius:6px;border:1px solid #ccc;'>";
             foreach ($categories as $cat) {
                 $selected = ($cat['id'] == $prod['category_id']) ? 'selected' : '';
                 echo "<option value='{$cat['id']}' $selected>".htmlspecialchars($cat['name'])."</option>";
             }
             echo    "</select>"
-                ."<button type='submit' class='admin-btn save'>Enregistrer</button>"
+                ."<input type='file' name='edit_picture' accept='image/*' style='padding:10px 14px;border-radius:6px;border:1px solid #ccc;'> ";
+            if (!empty($prod['picture'])) {
+                echo "<img src='assets/".htmlspecialchars($prod['picture'])."' alt='Aperçu' style='height:48px;vertical-align:middle;margin-left:8px;border-radius:6px;'>";
+            }
+            echo    "<button type='submit' class='admin-btn save'>Enregistrer</button>"
                 ."</form>"
                 ."</td>"
                 ."</tr>";
