@@ -151,27 +151,67 @@ session_start();
         echo '<option value="pricehigh"'.($sort=="pricehigh"?' selected':'').'>Prix décroissant</option>';
         echo '</select>';
         echo '<button type="submit">Filtrer</button>';
+        echo '<button type="button" onclick="window.location.href=\'index.php\'" style="margin-left:8px;background:#6c757d; color:#fff; border:none; border-radius:6px; padding:10px 24px; font-weight:600; cursor:pointer;">Réinitialiser</button>';
         echo '</form>';
         // --- Récupération et filtrage des produits ---
         $products = $productObj->getAll();
-        // Filtrage PHP (nom, description, catégorie, prix)
-        $filtered = array_filter($products, function($p) use ($search, $cat, $min, $max) {
-            $ok = true;
-            if ($search) {
-                $haystack = strtolower($p['name'].(isset($p['description'])?$p['description']:''));
-                $ok = $ok && (strpos($haystack, strtolower($search)) !== false);
+        // Si la recherche correspond à une catégorie, on affiche tous les produits de cette catégorie
+        $filtered = $products;
+        if ($search) {
+            $searchLower = strtolower($search);
+            // Cherche si le mot correspond à une catégorie
+            $catMatch = null;
+            foreach ($categories as $c) {
+                if (strpos(strtolower($c['name']), $searchLower) !== false) {
+                    $catMatch = $c['id'];
+                    break;
+                }
             }
-            if ($cat) {
-                $ok = $ok && ($p['category_id'] == $cat);
+            if ($catMatch) {
+                // Affiche tous les produits de cette catégorie
+                $filtered = array_filter($products, function($p) use ($catMatch) {
+                    return $p['category_id'] == $catMatch;
+                });
+            } else {
+                // Sinon, recherche classique sur nom/description/catégorie
+                $filtered = array_filter($products, function($p) use ($search, $cat, $min, $max) {
+                    $ok = true;
+                    $haystack = strtolower($p['name']);
+                    if (isset($p['description'])) {
+                        $haystack .= ' ' . strtolower($p['description']);
+                    }
+                    if (isset($p['cat_name'])) {
+                        $haystack .= ' ' . strtolower($p['cat_name']);
+                    }
+                    $ok = $ok && (strpos($haystack, strtolower($search)) !== false);
+                    if ($cat) {
+                        $ok = $ok && ($p['category_id'] == $cat);
+                    }
+                    if ($min !== '' && is_numeric($min)) {
+                        $ok = $ok && ($p['price'] >= $min);
+                    }
+                    if ($max !== '' && is_numeric($max)) {
+                        $ok = $ok && ($p['price'] <= $max);
+                    }
+                    return $ok;
+                });
             }
-            if ($min !== '' && is_numeric($min)) {
-                $ok = $ok && ($p['price'] >= $min);
-            }
-            if ($max !== '' && is_numeric($max)) {
-                $ok = $ok && ($p['price'] <= $max);
-            }
-            return $ok;
-        });
+        } else {
+            // Si pas de recherche, appliquer les autres filtres
+            $filtered = array_filter($products, function($p) use ($cat, $min, $max) {
+                $ok = true;
+                if ($cat) {
+                    $ok = $ok && ($p['category_id'] == $cat);
+                }
+                if ($min !== '' && is_numeric($min)) {
+                    $ok = $ok && ($p['price'] >= $min);
+                }
+                if ($max !== '' && is_numeric($max)) {
+                    $ok = $ok && ($p['price'] <= $max);
+                }
+                return $ok;
+            });
+        }
         // Tri
         if ($sort === 'az') {
             usort($filtered, function($a, $b) { return strcmp($a['name'], $b['name']); });
@@ -191,6 +231,7 @@ session_start();
                 echo '<div style="font-weight:700;color:#007bff;font-size:1.08rem;">'.htmlspecialchars($p['name']).'</div>';
                 echo '<div style="color:#888;font-size:0.98rem;margin:6px 0;">Catégorie : '.htmlspecialchars($catMap[$p['category_id']] ?? '').'</div>';
                 echo '<div style="color:#23272f;font-size:1.1rem;font-weight:600;">'.number_format($p['price'],2,',',' ').' €</div>';
+                echo '<div style="color:#aaa;font-size:0.92rem;margin-top:6px;">ID : '.htmlspecialchars($p['id']).'</div>';
                 echo '</div>';
             }
             echo '</div>';
